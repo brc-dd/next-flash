@@ -7,9 +7,9 @@
     "types": "tsc --noEmit"
   },
   "dependencies": {
+    "iron-session": "latest",
     "next-auth": "latest",
     "next": "latest",
-    "nodemailer": "latest",
     "react": "latest",
     "react-dom": "latest",
     "react-toastify": "latest"
@@ -17,7 +17,6 @@
   "devDependencies": {
     "@types/node": "latest",
     "@types/react": "latest",
-    "next-session": "latest",
     "typescript": "latest"
   },
   "prettier": {

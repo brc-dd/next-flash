@@ -1,18 +1,18 @@
-import type { GetServerSideProps, NextPage } from 'next'
+import type { NextPage } from 'next'
 import { getSession } from 'next-auth/react'
-import { getFlashSession } from '../lib/getFlashSession'
+import { withSessionSsr } from 'lib/session'
 
 const ProtectedPage: NextPage = () => <h1>Protected Page</h1>
 
-const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+const getServerSideProps = withSessionSsr(async ({ req, res }) => {
   const session = await getSession({ req })
   if (!session) {
-    const flashSession = await getFlashSession(req, res)
-    flashSession.flash = 'You must be logged in to access this page.'
+    req.session.flash = 'You must be logged in to access this page.'
+    await req.session.save()
     return { redirect: { destination: '/', permanent: false } }
   }
   return { props: {} }
-}
+})
 
 export default ProtectedPage
 export { getServerSideProps }

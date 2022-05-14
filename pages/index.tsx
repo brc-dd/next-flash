@@ -1,8 +1,7 @@
-import type { GetServerSidePropsContext, InferGetServerSidePropsType, NextPage } from 'next'
+import type { InferGetServerSidePropsType, NextPage } from 'next'
 import { signIn, signOut, useSession } from 'next-auth/react'
 import { toast, ToastContainer } from 'react-toastify'
-import { getFlashSession } from '../lib/getFlashSession'
-import { useFlash } from '../lib/useFlash'
+import { withSessionSsr } from 'lib/session'
 import 'react-toastify/dist/ReactToastify.min.css'
 
 const IndexPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>> = ({ flash }) => {
@@ -45,10 +44,12 @@ const IndexPage: NextPage<InferGetServerSidePropsType<typeof getServerSideProps>
   )
 }
 
-export const getServerSideProps = async ({ req, res }: GetServerSidePropsContext) => {
-  const flashSession = await getFlashSession(req, res)
-  const flash = useFlash(flashSession)
+const getServerSideProps = withSessionSsr(async ({ req }) => {
+  const { flash = null } = req.session
+  delete req.session.flash
+  await req.session.save()
   return { props: { flash } }
-}
+})
 
 export default IndexPage
+export { getServerSideProps }
